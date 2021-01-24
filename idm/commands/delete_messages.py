@@ -4,8 +4,6 @@ from vkapi import VkApiResponseException
 
 @dp.event_handle(dp.Methods.DELETE_MESSAGES)
 def delete_messages(event: Event) -> str:
-    message_id = utils.new_message(event.api, event.chat.peer_id, message="... удаляю сообщения ...")
-
     msg_ids = utils.get_msg_ids(event.api, event.chat.peer_id, event.obj['local_ids'])   
 
     if msg_ids == None or msg_ids == []:
@@ -18,7 +16,7 @@ def delete_messages(event: Event) -> str:
         event.api("messages.delete", message_ids=",".join(msg_ids), delete_for_all=1, spam=1 if event.obj.get("is_spam", False) else 0)
     except VkApiResponseException as e:
         if e.error_code == 924:
-            utils.new_message(event.api, event.chat.peer_id, message=f"❗ Не удалось удалить сообщения. Невозможно удалить сообщение, возможно пользователь администратор.")
+            utils.new_message(event.api, event.chat.peer_id, message="❗ Не удалось удалить сообщения. Невозможно удалить сообщение, возможно пользователь администратор.")
         else:
             utils.new_message(event.api, event.chat.peer_id, message=f"❗ Не удалось удалить сообщения. Ошибка VK {e.error_msg}")
     except:
